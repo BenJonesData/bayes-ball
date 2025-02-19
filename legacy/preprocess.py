@@ -165,7 +165,7 @@ def create_dataframe(
         + (1 / results_h2["b365d"])
         + (1 / results_h2["b365a"])
     )
-    results_h2["bookies_prob"] = bookies_margin / results_h2["b365h"]
+    results_h2["bookies_prob"] = 1 / results_h2["b365h"] / bookies_margin
 
     logger.info("Dataset creation complete")
     logger.info(f"Dataset length: {len(results_h2)}")
