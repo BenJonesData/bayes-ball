@@ -75,8 +75,10 @@ def get_data(seasons: Iterable[int], leagues: List[str] | str = "all") -> None:
 
     data_list = []
     for start_y in seasons:
-        season = str(start_y) + str(start_y + 1)
-        season_tag = str(start_y) + "_" + str(start_y + 1)
+        season_start = "0" + str(start_y) if start_y < 10 else str(start_y)
+        season_end = "0" + str(start_y + 1) if start_y < 9 else str(start_y + 1)
+        season = season_start + season_end
+        season_tag = season_start + "_" + season_end
         for league in leagues:
             url = (
                 "https://www.football-data.co.uk/mmz4281/"
