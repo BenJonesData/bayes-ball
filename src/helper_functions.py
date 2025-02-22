@@ -5,6 +5,9 @@ import tf_keras as tfk
 from tqdm import tqdm
 import string
 import random
+import numpy as np
+from sklearn.metrics import brier_score_loss
+from sklearn.utils import resample
 
 
 class EpochProgressBar(tfk.callbacks.Callback):
@@ -39,3 +42,18 @@ def get_train_test(
 def generate_random_string(length=8):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choices(characters, k=length))
+
+
+def bootstrap_mse(y_true, y_pred, n_bootstraps=1000, confidence_level=0.95):
+    brier_scores = []
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    
+    for _ in range(n_bootstraps):
+        indices = np.random.choice(len(y_true), size=len(y_true), replace=True)
+        brier_scores.append(brier_score_loss(y_true[indices], y_pred[indices]))
+
+    lower_bound = np.percentile(brier_scores, (1 - confidence_level) / 2 * 100)
+    upper_bound = np.percentile(brier_scores, (1 + confidence_level) / 2 * 100)
+    
+    return (lower_bound, upper_bound)
