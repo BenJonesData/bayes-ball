@@ -9,9 +9,6 @@ DESIRED_COLS = [
     "Date",
     "HomeTeam",
     "AwayTeam",
-    "B365H",
-    "B365D",
-    "B365A",
     "FTHG",
     "FTAG",
     "FTR",
@@ -31,7 +28,8 @@ DESIRED_COLS = [
     "HR",
     "AR",
 ]
-LEAGUES = ["E0"]
+BOOKIES_COLS = ["B365H", "B365D", "B365A"]
+LEAGUES = ["E0", "D1", "I1", "SP1", "F1"]
 
 
 def enrich_data(data: pd.DataFrame) -> pd.DataFrame:
@@ -87,7 +85,10 @@ def get_data(seasons: Iterable[int], leagues: List[str] | str = "all") -> None:
             try:
                 data = pd.read_csv(url)
                 data["season"] = season_tag
-                data = data[DESIRED_COLS]
+                if set(BOOKIES_COLS).issubset(set(data.columns)):
+                    data = data[DESIRED_COLS + BOOKIES_COLS] 
+                else:
+                    data = data[DESIRED_COLS]
                 data.columns = [col.lower() for col in data.columns]
                 processed_data = enrich_data(data)
                 data_list.append(processed_data)
